@@ -1,0 +1,12 @@
+﻿cl : command line  warning D9002: ignoring unknown option '-C:/D/_Egor/work/systolock/openssl/include'
+cl : command line  warning D9002: ignoring unknown option '-C:/D/_Egor/work/systolock/openssl/lib'
+  Server.cpp
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(180,1): warning C4102: 'EXIT': unreferenced label
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(290,9): warning C4101: 'iSendResult': unreferenced local variable
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(375,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(406,62): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(447,19): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(443,9): warning C4101: 'decryptedtext_len': unreferenced local variable
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(441,19): warning C4101: 'decryptedtext': unreferenced local variable
+C:\D\_Egor\work\systolock\SystoLockServer\Server\Server\Server.cpp(479,22): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Server.vcxproj -> C:\D\_Egor\work\systolock\SystoLockServer\Server\x64\Debug\Server.exe
