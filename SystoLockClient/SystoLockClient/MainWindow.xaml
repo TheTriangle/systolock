@@ -6,20 +6,23 @@
         xmlns:local="clr-namespace:SystoLockClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Background="Lavender">
-        <DataGrid x:Name="usersGrid" ItemsSource="{Binding}" CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="First Name"  Binding="{Binding firstName,UpdateSourceTrigger=LostFocus}"/>
-                <DataGridTextColumn Header="Last Name" Binding="{Binding lastName,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Initials" Binding="{Binding initials,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Display Name" Binding="{Binding displayName,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Description" Binding="{Binding description,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Office" Binding="{Binding office,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Phone Number" Binding="{Binding telephoneNumber,UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Email" Binding="{Binding EMail,UpdateSourceTrigger=LostFocus}"/>
-                <DataGridTextColumn Header="Webpage" Binding="{Binding webPage,UpdateSourceTrigger=LostFocus}"/>
-                <DataGridTextColumn Header="Creation date" Binding="{Binding creationDate,UpdateSourceTrigger=LostFocus}" IsReadOnly="True"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+    <StackPanel>
+        <Label x:Name="txtConnection" Content= "Please wait while we connect to the server" />
+        <Grid Background="Lavender">
+            <DataGrid x:Name="usersGrid" ItemsSource="{Binding}" CanUserAddRows="True" CanUserDeleteRows="True" AutoGenerateColumns="False" CanUserSortColumns="False" CanUserReorderColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="First Name"  Binding="{Binding firstName,UpdateSourceTrigger=LostFocus}"/>
+                    <DataGridTextColumn Header="Last Name" Binding="{Binding lastName,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Initials" Binding="{Binding initials,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Display Name" Binding="{Binding displayName,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding description,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Office" Binding="{Binding office,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Phone Number" Binding="{Binding telephoneNumber,UpdateSourceTrigger=LostFocus}" />
+                    <DataGridTextColumn Header="Email" Binding="{Binding EMail,UpdateSourceTrigger=LostFocus}"/>
+                    <DataGridTextColumn Header="Webpage" Binding="{Binding webPage,UpdateSourceTrigger=LostFocus}"/>
+                    <DataGridTextColumn Header="Creation date" Binding="{Binding creationDate,UpdateSourceTrigger=LostFocus}" IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </StackPanel>
 </Window>

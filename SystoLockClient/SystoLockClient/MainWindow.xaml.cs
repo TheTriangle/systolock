@@ -69,21 +69,33 @@ namespace SystoLockClient
         /// </summary>
         async private void ConnectToServer()
         {
-            IPHostEntry ipHostInfo = await Dns.GetHostEntryAsync("127.0.0.1");
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint ipEndPoint = new(ipAddress, 20248);
+            usersGrid.Visibility = Visibility.Collapsed; 
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            bool hasntCrashed = false;
 
-            client = new(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            try
+            for (int i = 0; i < host.AddressList.Length; i++)
             {
-                await client.ConnectAsync(ipEndPoint);
-            } catch (Exception ex)
+                IPEndPoint ipEndPoint = new(host.AddressList[i], 20248);
+                client = new(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    await client.ConnectAsync(ipEndPoint);
+                    hasntCrashed = true;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
+            if (!hasntCrashed)
             {
-                InputDialogSample inputDialog = new InputDialogSample("Could not connect to the server: " + ex.Message);
+                InputDialogSample inputDialog = new InputDialogSample("Could not connect to the server: none of localhost addresslist are suited for connection");
                 inputDialog.ShowDialog();
                 System.Windows.Application.Current.Shutdown();
             }
-
+            usersGrid.Visibility = Visibility.Visible;  
+            txtConnection.Visibility = Visibility.Collapsed;
             var buffer = new byte[1024];
             var received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
             var response = Encoding.UTF8.GetString(buffer, 0, received);

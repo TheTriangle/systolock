@@ -29,3 +29,15 @@ SystoLockServer/Server/.vs/Server/v17/Browse.VC.db
 SystoLockServer/Server/.vs/Server/v17/Browse.VC.db-shm
 SystoLockServer/Server/.vs/Server/v17/fileList.bin
 SystoLockServer/Server/.vs/Server/v17/ipch/AutoPCH/fbb04dedb776da81/SERVER.ipch
+*.pdb
+*.lastbuildstate
+*.tlog
+*.obj
+*.log
+*.ipdb
+*.ipdb
+*.iobj
+*.recipe
+*.idb
+*.idb
+*.ipch
