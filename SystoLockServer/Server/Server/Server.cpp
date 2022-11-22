@@ -236,12 +236,9 @@ DWORD WINAPI ServiceWorkerThread(LPVOID lpParam)
     OutputDebugString(_T("Database service: ServiceWorkerThread: Entry"));
 
     //  Periodically check if the service has been requested to stop
-    while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
-    {
-        CWinThread* singleUserThread = AfxBeginThread(ServerThread, 0);
-        WaitForSingleObject(singleUserThread, INFINITE);
-    }
-
+    CWinThread* singleUserThread = AfxBeginThread(ServerThread, 0);
+    ::WaitForSingleObject(singleUserThread->m_hThread, INFINITE);
+    
     OutputDebugString(_T("Database service: ServiceWorkerThread: Exit"));
 
     return ERROR_SUCCESS;
