@@ -74,7 +74,15 @@ namespace SystoLockClient
             IPEndPoint ipEndPoint = new(ipAddress, 20248);
 
             client = new(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            await client.ConnectAsync(ipEndPoint);
+            try
+            {
+                await client.ConnectAsync(ipEndPoint);
+            } catch (Exception ex)
+            {
+                InputDialogSample inputDialog = new InputDialogSample("Could not connect to the server: " + ex.Message);
+                inputDialog.ShowDialog();
+                System.Windows.Application.Current.Shutdown();
+            }
 
             var buffer = new byte[1024];
             var received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);

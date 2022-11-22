@@ -452,8 +452,8 @@ void encryptDatabase(vector<string>& database, string encryptionPassword) {
         database_write << ciphertext[i];
         cout << ciphertext[i];
     }
-    delete key;
-    delete plaintext;
+    delete[] key;
+    delete[] plaintext;
     database_write.close();
 }
 
@@ -491,7 +491,7 @@ void decryptDatabase(vector<string>& database, string encryptionPassword) {
             substr += decryptedtext[i];
         }
     }
-    delete key;
+    delete[] key;
     decryptedtext[decryptedtext_len] = '\0';
 }
 
