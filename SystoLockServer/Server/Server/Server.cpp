@@ -39,7 +39,8 @@ void decryptDatabase(vector<string>& database, string encryptionPassword);
 bool modifyDatabase(string command, vector<string>& database);
 void encryptDatabase(vector<string>& database, string encryptionPassword);
 void sendDatabase(vector<string> database, SOCKET client);
-string requestDatabasePassword(bool isNewDB, SOCKET client);
+string requestSingleResponse(string message, SOCKET client);
+UINT EternalServerThread(LPVOID pParam);
 
 #include <Windows.h>
 #include <tchar.h>
@@ -54,15 +55,15 @@ DWORD WINAPI ServiceWorkerThread(LPVOID lpParam);
 
 #define SERVICE_NAME  "Database app server service"
 
+string databasePath = "database";
+
 /*
 Program entry point
 */
-int _tmain(int argc, TCHAR* argv[])
+int _tmain(int argc, char** argv)
 {
     cout << "entered main\n";
-    ofstream test("log");
-    test << "I AM ALIVE";
-    test.close();
+
     OutputDebugString(_T("Database service: Main: Entry"));
     SERVICE_TABLE_ENTRY ServiceTable[] =
     {
@@ -235,16 +236,29 @@ DWORD WINAPI ServiceWorkerThread(LPVOID lpParam)
     cout << "entered serviceworkerthread";
     OutputDebugString(_T("Database service: ServiceWorkerThread: Entry"));
 
+    CWinThread* singleUserThread = AfxBeginThread(EternalServerThread, 0);
     //  Periodically check if the service has been requested to stop
+    while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
+    {
+    }
+    TerminateThread(singleUserThread, 0);
+    OutputDebugString(_T("Database service: ServiceWorkerThread: Exit"));
+
+    return ERROR_SUCCESS;
+}
+
+
+/*
+Thread that launches server thread after it closes
+*/
+UINT EternalServerThread(LPVOID pParam)
+{
     while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
     {
         CWinThread* singleUserThread = AfxBeginThread(ServerThread, 0);
         ::WaitForSingleObject(singleUserThread->m_hThread, INFINITE);
     }
-
-    OutputDebugString(_T("Database service: ServiceWorkerThread: Exit"));
-
-    return ERROR_SUCCESS;
+    return 0;
 }
 
 
@@ -292,14 +306,17 @@ UINT  ServerThread(LPVOID pParam)
     int recvbuflen = DEFAULT_BUFLEN;
     int iResult;
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    databasePath = requestSingleResponse("Provide path to database.", client);
 
-    fstream database_read("database");
+    fstream database_read(databasePath);
     // If database file is empty - nothing to decrypt - new password is needed
     bool isNewDB = database_read.peek() == std::ifstream::traits_type::eof();
 
     database_read.close();
 
-    string encryptionPassword = requestDatabasePassword(isNewDB, client);
+    string encryptionPassword = requestSingleResponse(isNewDB? "No previous data. Provide password to encrypt future data." : 
+        "Provide password to decrypt existing data.", client);
+
     if (encryptionPassword == "") {
         return 1;
     }
@@ -354,25 +371,16 @@ UINT  ServerThread(LPVOID pParam)
 }
 
 // returns user's password for encryption
-string requestDatabasePassword(bool isNewDB, SOCKET client) {
-    string encryptionPassword;
+string requestSingleResponse(string message, SOCKET client) {
+    string response;
 
-    string passwordRequestMessage;
     int iSendResult;
     char recvbuf[DEFAULT_BUFLEN];
     int recvbuflen = DEFAULT_BUFLEN;
     
-    if (isNewDB) {
-        OutputDebugString(_T("Database service: Database did not exist"));
-        passwordRequestMessage = "No previous data. Provide password to encrypt future data.";
-    }
-    else {
-        OutputDebugString(_T("Database service: Database existed"));
-        passwordRequestMessage = "Provide password to decrypt existing data.";
-    }
-    strcpy(recvbuf, passwordRequestMessage.c_str());
+    strcpy(recvbuf, message.c_str());
 
-    iSendResult = send(client, recvbuf, passwordRequestMessage.size(), 0);
+    iSendResult = send(client, recvbuf, message.size(), 0);
     if (iSendResult == SOCKET_ERROR) {
         OutputDebugString(_T("Database service: Send failed with error"));
         closesocket(client);
@@ -387,9 +395,9 @@ string requestDatabasePassword(bool isNewDB, SOCKET client) {
     int iResult = recv(client, passbuf, recvbuflen, 0);
     for (int i = 0; i < recvbuflen; i++) {
         if (passbuf[i] == 0) break;
-        encryptionPassword += passbuf[i];
+        response += passbuf[i];
     }
-    return encryptionPassword;
+    return response;
 }
 
 // sends data in database
@@ -447,7 +455,7 @@ void encryptDatabase(vector<string>& database, string encryptionPassword) {
         ciphertext);
 
     // Do something useful with the ciphertext here 
-    ofstream database_write("database");
+    ofstream database_write(databasePath);
     for (int i = 0; i < ciphertext_len; i++) {
         database_write << ciphertext[i];
         cout << ciphertext[i];
@@ -461,7 +469,7 @@ void encryptDatabase(vector<string>& database, string encryptionPassword) {
 void decryptDatabase(vector<string>& database, string encryptionPassword) {
     unsigned char ciphertext[2048];
 
-    ifstream database_read("database");
+    ifstream database_read(databasePath);
     stringstream buffer;
     buffer << database_read.rdbuf();
 

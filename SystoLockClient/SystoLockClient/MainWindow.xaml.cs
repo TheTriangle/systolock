@@ -69,7 +69,7 @@ namespace SystoLockClient
         /// </summary>
         async private void ConnectToServer()
         {
-            usersGrid.Visibility = Visibility.Collapsed; 
+            usersGrid.Visibility = Visibility.Collapsed;
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             bool hasntCrashed = false;
 
@@ -94,8 +94,30 @@ namespace SystoLockClient
                 inputDialog.ShowDialog();
                 System.Windows.Application.Current.Shutdown();
             }
-            usersGrid.Visibility = Visibility.Visible;  
+            usersGrid.Visibility = Visibility.Visible;
             txtConnection.Visibility = Visibility.Collapsed;
+            ProvidePath();
+            ProvidePassword();
+
+            initialization = false;
+        }
+
+        async void ProvidePath()
+        {
+            var buffer = new byte[1024];
+            var received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
+            var response = Encoding.UTF8.GetString(buffer, 0, received);
+        
+            String exepath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            String directory = System.IO.Path.GetDirectoryName(exepath);
+            String dbpath = System.IO.Path.Combine(directory, "database");
+
+            var messageBytes = Encoding.UTF8.GetBytes(dbpath);
+            _ = await client.SendAsync(new ArraySegment<byte>(messageBytes), SocketFlags.None);
+        }
+
+        async void ProvidePassword()
+        {
             var buffer = new byte[1024];
             var received = await client.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None);
             var response = Encoding.UTF8.GetString(buffer, 0, received);
@@ -114,12 +136,11 @@ namespace SystoLockClient
                         provided = true;
                     }
                 } while (!provided);
-                usersGrid.Visibility = Visibility.Visible;   
+                usersGrid.Visibility = Visibility.Visible;
                 var messageBytes = Encoding.UTF8.GetBytes(encodingPassword);
                 _ = await client.SendAsync(new ArraySegment<byte>(messageBytes), SocketFlags.None);
                 await RequestDatabase();
             }
-            initialization = false;
         }
 
         /// <summary>
