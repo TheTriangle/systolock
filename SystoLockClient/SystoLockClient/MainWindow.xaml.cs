@@ -179,7 +179,7 @@ namespace SystoLockClient
                 inputDialog = new InputDialogSample("Please enter password to encrypt database with:");
                 if (inputDialog.ShowDialog() == true)
                 {
-                    ((User)(e.NewItems[0])).creationDate = DateTime.Now.ToString();
+                    ((User)(e.NewItems[0])).creationDate = DateTime.Now.ToString("yyyy-M-dd hh:mm:ss");
                     encodingPassword = inputDialog.Answer;
                     if (encodingPassword == "")
                     {
@@ -195,7 +195,7 @@ namespace SystoLockClient
                     return;
                 }
             }
-            ((User)(e.NewItems[0])).creationDate = DateTime.Now.ToString();
+            ((User)(e.NewItems[0])).creationDate = DateTime.Now.ToString("yyyy-M-dd hh:mm:ss");
              
             String message = "New|";
             User user = (User)(e.NewItems[0]);

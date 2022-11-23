@@ -596,6 +596,7 @@ bool modifyDatabase(string command, vector<string>& database) {
     }
     if (command == "Delete") {
         int index = stoi(value);
+        if (index >= database.size()) return false;
         database.erase(std::next(database.begin(), index));
     }
     if (command == "Edit") {
